@@ -484,10 +484,13 @@ internal extension SideMenuNavigationController {
             if !presenting {
                 dismissMenu(interactively: true)
             }
+            if gesture.xTranslation == 0 {transitionController?.handle(state: .finish) }
             transitionController?.handle(state: .update(progress: progress))
         case .changed:
+            if gesture.xTranslation == 0 {transitionController?.handle(state: .cancel) }
             transitionController?.handle(state: .update(progress: progress))
         case .ended:
+            if gesture.xTranslation == 0 {transitionController?.handle(state: .cancel) }
             let velocity = gesture.xVelocity * factor(presenting)
             let finished = velocity >= 100 || velocity >= -50 && abs(progress) >= 0.5
             transitionController?.handle(state: finished ? .finish : .cancel)
