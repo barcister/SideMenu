@@ -63,6 +63,8 @@ public extension SideMenuPresentationStyle {
     /// The existing view slides out to reveal the menu underneath.
     static var viewSlideOut: SideMenuPresentationStyle {
         return SideMenuPresentationStyle {
+            $0.menuTranslateFactor = 0
+            $0.menuScaleFactor = 1.25
             $0.presentingTranslateFactor = 1
         }
     }
@@ -70,7 +72,8 @@ public extension SideMenuPresentationStyle {
     static var viewSlideOutMenuIn: SideMenuPresentationStyle {
         return SideMenuPresentationStyle {
             $0.menuTranslateFactor = -1
-            $0.presentingTranslateFactor = 1
+            $0.presentingTranslateFactor = 1.25
+            $0.menuScaleFactor = 1.25
         }
     }
     /// The menu dissolves in over the existing view.

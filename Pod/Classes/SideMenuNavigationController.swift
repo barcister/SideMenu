@@ -111,6 +111,11 @@ open class SideMenuNavigationController: UINavigationController {
 
     internal typealias Model = MenuModel & PresentationModel & AnimationModel
 
+    private enum Constants {
+        static let maxYTranslation: CGFloat = 55.0
+        static let maxBeginYTranslation: CGFloat = 10.0
+    }
+
     private lazy var _leftSide = Protected(false) { [weak self] oldValue, newValue in
         guard self?.isHidden != false else {
             Print.warning(.property, arguments: .leftSide, required: true)
@@ -244,7 +249,8 @@ open class SideMenuNavigationController: UINavigationController {
         // the view hierarchy leaving the screen black/empty. This is because the transition moves views within a container
         // view, but dismissing without animation removes the container view before the original hierarchy is restored.
         // This check corrects that.
-        if let foundViewController = findViewController, foundViewController.view.window == nil {
+        if let foundViewController = findViewController, foundViewController.view.window == nil  {
+            print("WORKAROUND")
             transitionController?.transition(presenting: false, animated: false)
         }
 
@@ -263,6 +269,7 @@ open class SideMenuNavigationController: UINavigationController {
         } else if dismissOnPresent {
             view.isHidden = true
         }
+        print("WORKAROUND: \(isBeingDismissed), \(isBeingPresented), \(dismissOnPresent)")
     }
     
     override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -479,10 +486,13 @@ internal extension SideMenuNavigationController {
         let width = menuWidth
         let distance = gesture.xTranslation / width
         let progress = max(min(distance * factor(presenting), 1), 0)
+//        let yTranslation = abs(gesture.translation(in: self.view).y)
+//        let isGreater = yTranslation > Constants.maxYTranslation
+//        let isQuickSwipe = abs(gesture.velocity(in: self.view).y / 60) == 0.0
         switch (gesture.state) {
         case .began:
             if !presenting {
-                dismissMenu(interactively: true)
+                dismissMenu(animated: true, interactively: true, completion: nil)
             }
             transitionController?.handle(state: .update(progress: progress))
         case .changed:
